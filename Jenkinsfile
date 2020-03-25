@@ -2,10 +2,16 @@ node {
   stage('SCM') {
     checkout scm
   }
+
+  stage('compile'){
+	def mvnHome = tool name: 'maven-3', type: 'maven'
+	sh "${mvnHome}/bin/mvn package"
+  }
+
   stage('SonarQube analysis') {
-    def scannerHome = tool 'SonarScanner 4.0';
+    def mvnHome = tool name: 'maven-3', type: 'maven'
     withSonarQubeEnv('sonar-1') { 
-      sh "${scannerHome}/bin/sonar-scanner"
+      sh "${mvnHome}/bin/mvn sonar:sonar"
     }
   }
 }
